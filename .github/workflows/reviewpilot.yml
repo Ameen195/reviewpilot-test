@@ -1,0 +1,20 @@
+# Copy to .github/workflows/reviewpilot.yml in your repo, then add a GROQ_API_KEY repo secret.
+name: ReviewPilot
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    # Fork PRs get a read-only token and no secrets, so they cannot be reviewed. Do not "fix"
+    # this with pull_request_target: that runs with secrets next to untrusted PR content.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Ameen195/reviewpilot/action@v0.1.0
+        with:
+          groq_api_key: ${{ secrets.GROQ_API_KEY }}
